@@ -5,10 +5,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import { TicketType } from './helpers/ticket-type.enum';
 import { TicketStatus } from './helpers/ticket-status.enum';
+import { Client } from 'src/users/clients/client.entity';
 
 @Entity()
 export class Ticket extends BaseEntity {
@@ -27,15 +29,19 @@ export class Ticket extends BaseEntity {
   @Column()
   status: TicketStatus;
 
-  @Column({ nullable: true })
-  clientId: number;
-
-  @Column({ nullable: true })
-  technicianId: number;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(
+    type => Client,
+    client => client.tickets,
+    { eager: false },
+  )
+  client: Client;
+
+  @Column()
+  clientId: number;
 }

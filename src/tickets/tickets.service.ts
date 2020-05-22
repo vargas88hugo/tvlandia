@@ -5,6 +5,7 @@ import { CreateTicketDto } from './dto/create-ticket.dto';
 import { Ticket } from './ticket.entity';
 import { TicketStatus } from './helpers/ticket-status.enum';
 import { TicketsRepository } from './tickets.repository';
+import { Client } from 'src/users/clients/client.entity';
 
 @Injectable()
 export class TicketsService {
@@ -13,7 +14,10 @@ export class TicketsService {
     private ticketsRepository,
   ) {}
 
-  async createTicket(createTicketDto: CreateTicketDto): Promise<Ticket> {
+  async createTicket(
+    createTicketDto: CreateTicketDto,
+    client: Client,
+  ): Promise<Ticket> {
     const { description, observations, serviceType } = createTicketDto;
     const ticket = new Ticket();
 
@@ -23,8 +27,11 @@ export class TicketsService {
     }
     ticket.serviceType = serviceType;
     ticket.status = TicketStatus.HOLD;
+    ticket.client = client;
 
-    this.ticketsRepository.saveTicket(ticket);
+    await this.ticketsRepository.saveTicket(ticket);
+
+    delete ticket.client;
 
     return ticket;
   }

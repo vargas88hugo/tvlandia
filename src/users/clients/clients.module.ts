@@ -21,6 +21,6 @@ import { ClientsRepository } from './clients.repository';
   ],
   controllers: [ClientsController],
   providers: [ClientsService, JwtClientStrategy],
-  exports: [JwtClientStrategy, PassportModule, ClientsService],
+  exports: [JwtClientStrategy, PassportModule],
 })
 export class ClientsModule {}

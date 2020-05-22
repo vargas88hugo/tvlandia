@@ -7,11 +7,6 @@ import { ClientsModule } from './users/clients/clients.module';
 import { TechniciansModule } from './users/technicians/technicians.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(typeOrmConfig),
-    TicketsModule,
-    ClientsModule,
-    TechniciansModule,
-  ],
+  imports: [TypeOrmModule.forRoot(typeOrmConfig), TicketsModule, ClientsModule],
 })
 export class AppModule {}
