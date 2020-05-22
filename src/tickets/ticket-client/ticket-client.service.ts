@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from 'src/tickets/ticket.entity';
-import { TicketClientRepository } from './ticket-client.repository';
 import { Client } from 'src/users/clients/client.entity';
 import { CreateTicketDto } from '../dto/create-ticket.dto';
 import { TicketStatus } from '../helpers/ticket-status.enum';
+import { TicketsRepository } from '../tickets.repository';
 
 @Injectable()
 export class TicketClientService {
   constructor(
-    @InjectRepository(TicketClientRepository)
-    private ticketClientRepository,
+    @InjectRepository(TicketsRepository)
+    private ticketRepository,
   ) {}
 
   async createTicket(
@@ -29,7 +29,7 @@ export class TicketClientService {
     ticket.status = TicketStatus.HOLD;
     ticket.client = client;
 
-    await this.ticketClientRepository.saveTicket(ticket);
+    await this.ticketRepository.saveTicket(ticket);
 
     delete ticket.client;
 
@@ -37,7 +37,7 @@ export class TicketClientService {
   }
 
   async getAllTicketsClient(client: Client): Promise<Ticket[]> {
-    const query = this.ticketClientRepository.createQueryBuilder('ticket');
+    const query = this.ticketRepository.createQueryBuilder('ticket');
 
     query.where('ticket.clientId = :clientId', { clientId: client.id });
 

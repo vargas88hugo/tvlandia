@@ -21,6 +21,6 @@ import { JwtTechnicianStrategy } from './helpers/jwt-technician.strategy';
   ],
   controllers: [TechniciansController],
   providers: [TechniciansService, JwtTechnicianStrategy],
-  exports: [JwtTechnicianStrategy, PassportModule, TechniciansService],
+  exports: [JwtTechnicianStrategy, PassportModule],
 })
 export class TechniciansModule {}

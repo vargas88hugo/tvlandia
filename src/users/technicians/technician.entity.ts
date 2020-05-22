@@ -1,8 +1,15 @@
-import { BaseEntity, PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import {
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  OneToMany,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { TechnicianStatus } from './helpers/technician-status.enum';
 import { UserInterface } from '../user.interface';
+import { Ticket } from 'src/tickets/ticket.entity';
 
 @Entity()
 export class Technician extends BaseEntity implements UserInterface {
@@ -26,6 +33,13 @@ export class Technician extends BaseEntity implements UserInterface {
 
   @Column()
   salt: string;
+
+  @OneToMany(
+    type => Ticket,
+    ticket => ticket.technician,
+    { eager: true },
+  )
+  tickets: Ticket[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

@@ -15,7 +15,7 @@ import { Technician } from './technician.entity';
 import { TechniciansService } from './technicians.service';
 import { AuthCredentialsDto } from '../clients/dto/auth-client-credentials.dto';
 import { TechnicianAuthGuard } from './helpers/technician-auth.guard';
-import { GetTechnician } from './helpers/get-client.decorator';
+import { GetTechnician } from './helpers/get-technician.decorator';
 import { SignInTechnicianDto } from './dto/signin-technician.dto';
 
 @Controller('technicians')

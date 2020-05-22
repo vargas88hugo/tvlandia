@@ -11,6 +11,7 @@ import {
 import { TicketType } from './helpers/ticket-type.enum';
 import { TicketStatus } from './helpers/ticket-status.enum';
 import { Client } from 'src/users/clients/client.entity';
+import { Technician } from 'src/users/technicians/technician.entity';
 
 @Entity()
 export class Ticket extends BaseEntity {
@@ -41,6 +42,16 @@ export class Ticket extends BaseEntity {
     { eager: false },
   )
   client: Client;
+
+  @ManyToOne(
+    type => Technician,
+    technician => technician.tickets,
+    { eager: false },
+  )
+  technician: Technician;
+
+  @Column({ nullable: true })
+  technicianId: number;
 
   @Column()
   clientId: number;
