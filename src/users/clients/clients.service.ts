@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 
 import { CreateClientDto } from './dto/create-client.dto';
 import { ClientStatus } from './helpers/client-status.enum';
