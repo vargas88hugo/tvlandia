@@ -37,6 +37,12 @@ export class TicketClientService {
   }
 
   async getAllTicketsClient(client: Client): Promise<Ticket[]> {
-    return this.ticketClientRepository.getTickets(client);
+    const query = this.ticketClientRepository.createQueryBuilder('ticket');
+
+    query.where('ticket.clientId = :clientId', { clientId: client.id });
+
+    const tickets = await query.getMany();
+
+    return tickets;
   }
 }
