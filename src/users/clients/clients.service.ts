@@ -3,22 +3,20 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { ClientStatus } from './helpers/client-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientRepository } from './client.repository';
 import { Client } from './client.entity';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { hashPassword } from './helpers/hash-password';
+import { AuthCredentialsDto } from './dto/auth-client-credentials.dto';
+import { hashPassword } from '../../common/hash-password';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(ClientRepository)
     private clientRepository: ClientRepository,
-    private jwtService: JwtService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
@@ -38,7 +36,7 @@ export class ClientsService {
     }
     await this.clientRepository.saveClient(client);
 
-    return `New client with name ${name} has been created.`;
+    return `New client with email ${email} has been created.`;
   }
 
   async getAllClients(): Promise<Client[]> {

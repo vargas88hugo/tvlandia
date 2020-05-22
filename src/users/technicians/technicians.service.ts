@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 
 import { TechnicianRepository } from './technician.repository';
 import { Technician } from './technician.entity';
-import { CreateTechnicianDto } from './dto/create-technician.dto';
 import { TechnicianStatus } from './helpers/technician-status.enum';
+import { AuthCredentialsDto } from '../clients/dto/auth-client-credentials.dto';
+import { hashPassword } from 'src/common/hash-password';
 
 @Injectable()
 export class TechniciansService {
@@ -12,6 +18,28 @@ export class TechniciansService {
     @InjectRepository(TechnicianRepository)
     private technicianRepository: TechnicianRepository,
   ) {}
+
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+    const { name, phone, email, password } = authCredentialsDto;
+    const salt = await bcrypt.genSalt();
+    const technician = new Technician();
+
+    technician.name = name;
+    technician.phone = phone;
+    technician.email = email;
+    technician.status = TechnicianStatus.IDLE;
+    technician.password = await hashPassword(password, salt);
+    technician.salt = salt;
+
+    if (await this.technicianRepository.findOne({ email })) {
+      throw new ConflictException(
+        `Technician with email ${email} already exists.`,
+      );
+    }
+    await this.technicianRepository.saveTechnician(technician);
+
+    return `New technician with email ${email} has been created.`;
+  }
 
   async getAllTechnicians(): Promise<Technician[]> {
     return await this.technicianRepository.getAllTechnicians();
@@ -25,22 +53,6 @@ export class TechniciansService {
     }
 
     return found;
-  }
-
-  async createTechnician(
-    createTechnicianDto: CreateTechnicianDto,
-  ): Promise<Technician> {
-    const { name, phone, email } = createTechnicianDto;
-    const technician = new Technician();
-
-    technician.name = name;
-    technician.phone = phone;
-    technician.email = email;
-    technician.status = TechnicianStatus.IDLE;
-
-    this.technicianRepository.saveTechnician(technician);
-
-    return technician;
   }
 
   async deleteTechnicianById(id: number): Promise<string> {

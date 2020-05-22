@@ -12,7 +12,7 @@ import {
 
 import { ClientsService } from './clients.service';
 import { Client } from './client.entity';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { AuthCredentialsDto } from './dto/auth-client-credentials.dto';
 
 @Controller('clients')
 export class ClientsController {

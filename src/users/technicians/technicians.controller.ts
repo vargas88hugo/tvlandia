@@ -11,32 +11,32 @@ import {
 } from '@nestjs/common';
 import { Technician } from './technician.entity';
 import { TechniciansService } from './technicians.service';
-import { CreateTechnicianDto } from './dto/create-technician.dto';
+import { AuthCredentialsDto } from '../clients/dto/auth-client-credentials.dto';
 
 @Controller('technicians')
 export class TechniciansController {
-  constructor(private TechniciansService: TechniciansService) {}
+  constructor(private techniciansService: TechniciansService) {}
+
+  @Post('/signup')
+  @UsePipes(ValidationPipe)
+  signUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<string> {
+    return this.techniciansService.signUp(authCredentialsDto);
+  }
 
   @Get()
   getAllTechnicians(): Promise<Technician[]> {
-    return this.TechniciansService.getAllTechnicians();
+    return this.techniciansService.getAllTechnicians();
   }
 
   @Get('/:id')
   getTechnicianById(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Technician> {
-    return this.TechniciansService.getTechnicianById(id);
-  }
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  createTechnician(@Body() body: CreateTechnicianDto): Promise<Technician> {
-    return this.TechniciansService.createTechnician(body);
+    return this.techniciansService.getTechnicianById(id);
   }
 
   @Delete('/:id')
   deleteTechnicianById(@Param('id') id: number): Promise<string> {
-    return this.TechniciansService.deleteTechnicianById(id);
+    return this.techniciansService.deleteTechnicianById(id);
   }
 }
