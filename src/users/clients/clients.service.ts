@@ -1,27 +1,54 @@
-import { Injectable } from '@nestjs/common';
-import { ClientInterface, ClientStatus } from './client.model';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateUserDto } from './dto/create-user.dto';
+
+import { CreateClientDto } from './dto/create-client.dto';
+import { ClientStatus } from './helpers/client-status.enum';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ClientRepository } from './client.repository';
+import { Client } from './client.entity';
 
 @Injectable()
 export class ClientsService {
-  private users: ClientInterface[] = [];
+  constructor(
+    @InjectRepository(ClientRepository)
+    private clientRepository: ClientRepository,
+  ) {}
 
-  getAllClients(): ClientInterface[] {
-    return this.users;
+  async getAllClients(): Promise<Client[]> {
+    return await this.clientRepository.getAllClients();
   }
 
-  createClient(body: CreateUserDto): ClientInterface {
-    const { name, phone, email } = body;
+  async getClientById(id: number) {
+    const found = await this.clientRepository.findClient(id);
 
-    const client: ClientInterface = {
-      id: uuidv4(),
-      name,
-      phone,
-      email,
-      status: ClientStatus.ACTIVE,
-    };
+    if (!found) {
+      throw new NotFoundException(`User with id ${id} not found.`);
+    }
+
+    return found;
+  }
+
+  async createClient(createClientDto: CreateClientDto): Promise<Client> {
+    const { name, phone, email } = createClientDto;
+    const client = new Client();
+
+    client.name = name;
+    client.phone = phone;
+    client.email = email;
+    client.status = ClientStatus.ACTIVE;
+
+    this.clientRepository.saveClient(client);
 
     return client;
+  }
+
+  async deleteClientById(id: number): Promise<string> {
+    const result = await this.clientRepository.deleteClient(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`User with id ${id} not found.`);
+    }
+
+    return `User with id ${id} has been deleted.`;
   }
 }
