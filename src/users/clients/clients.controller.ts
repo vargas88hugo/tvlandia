@@ -8,11 +8,16 @@ import {
   UsePipes,
   ValidationPipe,
   ParseIntPipe,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 
 import { ClientsService } from './clients.service';
 import { Client } from './client.entity';
 import { AuthCredentialsDto } from './dto/auth-client-credentials.dto';
+import { SignInClientDto } from './dto/signin-client.dto';
+import { ClientAuthGuard } from './helpers/client-auth.guard';
+import { GetClient } from './helpers/get-client.decorator';
 
 @Controller('clients')
 export class ClientsController {
@@ -22,6 +27,13 @@ export class ClientsController {
   @UsePipes(ValidationPipe)
   signUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<string> {
     return this.clientsService.signUp(authCredentialsDto);
+  }
+
+  @Post('signin')
+  signIn(
+    @Body(ValidationPipe) signInClientDto: SignInClientDto,
+  ): Promise<{ accessToken: string }> {
+    return this.clientsService.signIn(signInClientDto);
   }
 
   @Get()
@@ -37,5 +49,11 @@ export class ClientsController {
   @Delete('/:id')
   deleteClientById(@Param('id') id: number): Promise<string> {
     return this.clientsService.deleteClientById(id);
+  }
+
+  @Post('/test')
+  @UseGuards(ClientAuthGuard)
+  test(@GetClient() client: Client) {
+    console.log(client);
   }
 }

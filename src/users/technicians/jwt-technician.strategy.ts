@@ -19,10 +19,11 @@ export class JwtTechnicianStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<Technician> {
-    const { name } = payload;
-    const technician = await this.techniciansRepository.findOne({ name });
+    const { email } = payload;
+    const technician = await this.techniciansRepository.findOne({ email });
 
     if (!technician) {
+      console.log('aaaaaaaaaaaaaaaaaaa');
       throw new UnauthorizedException();
     }
 

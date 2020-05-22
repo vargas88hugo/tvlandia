@@ -2,21 +2,26 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { ClientStatus } from './helpers/client-status.enum';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ClientsRepository } from './clients.repository';
 import { Client } from './client.entity';
 import { AuthCredentialsDto } from './dto/auth-client-credentials.dto';
 import { hashPassword } from '../../common/hash-password';
+import { JwtPayload } from '../jwt-payload.interface';
+import { SignInClientDto } from './dto/signin-client.dto';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(ClientsRepository)
     private clientsRepository: ClientsRepository,
+    private jwtService: JwtService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
@@ -39,6 +44,21 @@ export class ClientsService {
     return `New client with email ${email} has been created.`;
   }
 
+  async signIn(
+    signInClientDto: SignInClientDto,
+  ): Promise<{ accessToken: string }> {
+    const email = await this.validateUserPassword(signInClientDto);
+
+    if (!email) {
+      throw new UnauthorizedException('Invalid Credentials');
+    }
+
+    const payload: JwtPayload = { email };
+    const accessToken = this.jwtService.sign(payload);
+
+    return { accessToken };
+  }
+
   async getAllClients(): Promise<Client[]> {
     return await this.clientsRepository.getAllClients();
   }
@@ -57,5 +77,18 @@ export class ClientsService {
       throw new NotFoundException(`Client with id ${id} not found.`);
     }
     return `Client with id ${id} has been deleted.`;
+  }
+
+  async validateUserPassword(
+    signInClientDto: SignInClientDto,
+  ): Promise<string> {
+    const { email, password } = signInClientDto;
+    const user = await this.clientsRepository.findOne({ email });
+
+    if (user && (await user.validatePassword(password))) {
+      return user.email;
+    }
+
+    return null;
   }
 }
