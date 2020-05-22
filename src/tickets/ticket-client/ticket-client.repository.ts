@@ -14,4 +14,8 @@ export class TicketClientRepository extends Repository<Ticket> {
 
     return tickets;
   }
+
+  async saveTicket(ticket: Ticket): Promise<void> {
+    await ticket.save();
+  }
 }

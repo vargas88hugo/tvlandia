@@ -14,28 +14,6 @@ export class TicketsService {
     private ticketsRepository,
   ) {}
 
-  async createTicket(
-    createTicketDto: CreateTicketDto,
-    client: Client,
-  ): Promise<Ticket> {
-    const { description, observations, serviceType } = createTicketDto;
-    const ticket = new Ticket();
-
-    ticket.description = description;
-    if (observations) {
-      ticket.observations = observations;
-    }
-    ticket.serviceType = serviceType;
-    ticket.status = TicketStatus.HOLD;
-    ticket.client = client;
-
-    await this.ticketsRepository.saveTicket(ticket);
-
-    delete ticket.client;
-
-    return ticket;
-  }
-
   async getAllTickets(): Promise<Ticket[]> {
     return await this.ticketsRepository.find({});
   }
