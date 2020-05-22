@@ -1,17 +1,45 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
-import { CreateClientDto } from './dto/create-client.dto';
 import { ClientStatus } from './helpers/client-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientRepository } from './client.repository';
 import { Client } from './client.entity';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { hashPassword } from './helpers/hash-password';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(ClientRepository)
     private clientRepository: ClientRepository,
+    private jwtService: JwtService,
   ) {}
+
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+    const { name, phone, email, password } = authCredentialsDto;
+    const salt = await bcrypt.genSalt();
+    const client = new Client();
+
+    client.name = name;
+    client.phone = phone;
+    client.email = email;
+    client.status = ClientStatus.ACTIVE;
+    client.password = await hashPassword(password, salt);
+    client.salt = salt;
+
+    if (await this.clientRepository.findOne({ email })) {
+      throw new ConflictException(`Client with email ${email} already exists.`);
+    }
+    await this.clientRepository.saveClient(client);
+
+    return `New client with name ${name} has been created.`;
+  }
 
   async getAllClients(): Promise<Client[]> {
     return await this.clientRepository.getAllClients();
@@ -19,35 +47,17 @@ export class ClientsService {
 
   async getClientById(id: number) {
     const found = await this.clientRepository.findClient(id);
-
     if (!found) {
-      throw new NotFoundException(`User with id ${id} not found.`);
+      throw new NotFoundException(`Client with id ${id} not found.`);
     }
-
     return found;
-  }
-
-  async createClient(createClientDto: CreateClientDto): Promise<Client> {
-    const { name, phone, email } = createClientDto;
-    const client = new Client();
-
-    client.name = name;
-    client.phone = phone;
-    client.email = email;
-    client.status = ClientStatus.ACTIVE;
-
-    this.clientRepository.saveClient(client);
-
-    return client;
   }
 
   async deleteClientById(id: number): Promise<string> {
     const result = await this.clientRepository.deleteClient(id);
-
     if (result.affected === 0) {
-      throw new NotFoundException(`User with id ${id} not found.`);
+      throw new NotFoundException(`Client with id ${id} not found.`);
     }
-
-    return `User with id ${id} has been deleted.`;
+    return `Client with id ${id} has been deleted.`;
   }
 }

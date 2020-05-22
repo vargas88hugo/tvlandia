@@ -11,12 +11,18 @@ import {
 } from '@nestjs/common';
 
 import { ClientsService } from './clients.service';
-import { CreateClientDto } from './dto/create-client.dto';
 import { Client } from './client.entity';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private clientsService: ClientsService) {}
+
+  @Post('/signup')
+  @UsePipes(ValidationPipe)
+  signUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<string> {
+    return this.clientsService.signUp(authCredentialsDto);
+  }
 
   @Get()
   getAllClients(): Promise<Client[]> {
@@ -26,12 +32,6 @@ export class ClientsController {
   @Get('/:id')
   getClientById(@Param('id', ParseIntPipe) id: number): Promise<Client> {
     return this.clientsService.getClientById(id);
-  }
-
-  @Post()
-  @UsePipes(ValidationPipe)
-  createClient(@Body() body: CreateClientDto): Promise<Client> {
-    return this.clientsService.createClient(body);
   }
 
   @Delete('/:id')
