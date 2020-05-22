@@ -1,10 +1,10 @@
 import { Repository, EntityRepository, DeleteResult } from 'typeorm';
 
 import { Ticket } from 'src/tickets/ticket.entity';
-import { Client } from '../client.entity';
+import { Client } from 'src/users/clients/client.entity';
 
 @EntityRepository(Ticket)
-export class TicketsRepository extends Repository<Ticket> {
+export class TicketClientRepository extends Repository<Ticket> {
   async getTickets(client: Client): Promise<Ticket[]> {
     const query = this.createQueryBuilder('ticket');
 

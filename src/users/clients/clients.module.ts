@@ -7,9 +7,6 @@ import { JwtClientStrategy } from './helpers/jwt-client.strategy';
 import { ClientsService } from './clients.service';
 import { ClientsController } from './clients.controller';
 import { ClientsRepository } from './clients.repository';
-import { TicketsController } from './tickets/tickets.controller';
-import { TicketsService } from './tickets/tickets.service';
-import { TicketsRepository } from './tickets/tickets.repository';
 
 @Module({
   imports: [
@@ -20,10 +17,10 @@ import { TicketsRepository } from './tickets/tickets.repository';
         expiresIn: 3600,
       },
     }),
-    TypeOrmModule.forFeature([ClientsRepository, TicketsRepository]),
+    TypeOrmModule.forFeature([ClientsRepository]),
   ],
-  controllers: [ClientsController, TicketsController],
-  providers: [ClientsService, JwtClientStrategy, TicketsService],
+  controllers: [ClientsController],
+  providers: [ClientsService, JwtClientStrategy],
   exports: [JwtClientStrategy, PassportModule],
 })
 export class ClientsModule {}
