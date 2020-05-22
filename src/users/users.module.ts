@@ -5,10 +5,10 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 
 import { ClientsController } from './clients/clients.controller';
 import { ClientsService } from './clients/clients.service';
-import { ClientRepository } from './clients/client.repository';
+import { ClientsRepository } from './clients/clients.repository';
 import { TechniciansController } from './technicians/technicians.controller';
 import { TechniciansService } from './technicians/technicians.service';
-import { TechnicianRepository } from './technicians/technician.repository';
+import { TechniciansRepository } from './technicians/technicians.repository';
 import { JwtClientStrategy } from './clients/jwt-client.strategy';
 import { JwtTechnicianStrategy } from './technicians/jwt-technician.strategy';
 
@@ -21,8 +21,8 @@ import { JwtTechnicianStrategy } from './technicians/jwt-technician.strategy';
         expiresIn: 3600,
       },
     }),
-    TypeOrmModule.forFeature([ClientRepository]),
-    TypeOrmModule.forFeature([TechnicianRepository]),
+    TypeOrmModule.forFeature([ClientsRepository]),
+    TypeOrmModule.forFeature([TechniciansRepository]),
   ],
   controllers: [ClientsController, TechniciansController],
   providers: [

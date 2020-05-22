@@ -3,14 +3,14 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UnauthorizedException } from '@nestjs/common';
 
-import { TechnicianRepository } from './technician.repository';
+import { TechniciansRepository } from './technicians.repository';
 import { JwtPayload } from '../jwt-payload.interface';
 import { Technician } from './technician.entity';
 
 export class JwtTechnicianStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @InjectRepository(TechnicianRepository)
-    private technicianRepository: TechnicianRepository,
+    @InjectRepository(TechniciansRepository)
+    private techniciansRepository: TechniciansRepository,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -20,7 +20,7 @@ export class JwtTechnicianStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: JwtPayload): Promise<Technician> {
     const { name } = payload;
-    const technician = await this.technicianRepository.findOne({ name });
+    const technician = await this.techniciansRepository.findOne({ name });
 
     if (!technician) {
       throw new UnauthorizedException();

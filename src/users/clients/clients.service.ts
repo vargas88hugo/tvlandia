@@ -7,7 +7,7 @@ import * as bcrypt from 'bcrypt';
 
 import { ClientStatus } from './helpers/client-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientRepository } from './client.repository';
+import { ClientsRepository } from './clients.repository';
 import { Client } from './client.entity';
 import { AuthCredentialsDto } from './dto/auth-client-credentials.dto';
 import { hashPassword } from '../../common/hash-password';
@@ -15,8 +15,8 @@ import { hashPassword } from '../../common/hash-password';
 @Injectable()
 export class ClientsService {
   constructor(
-    @InjectRepository(ClientRepository)
-    private clientRepository: ClientRepository,
+    @InjectRepository(ClientsRepository)
+    private clientsRepository: ClientsRepository,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
@@ -31,20 +31,20 @@ export class ClientsService {
     client.password = await hashPassword(password, salt);
     client.salt = salt;
 
-    if (await this.clientRepository.findOne({ email })) {
+    if (await this.clientsRepository.findOne({ email })) {
       throw new ConflictException(`Client with email ${email} already exists.`);
     }
-    await this.clientRepository.saveClient(client);
+    await this.clientsRepository.saveClient(client);
 
     return `New client with email ${email} has been created.`;
   }
 
   async getAllClients(): Promise<Client[]> {
-    return await this.clientRepository.getAllClients();
+    return await this.clientsRepository.getAllClients();
   }
 
   async getClientById(id: number) {
-    const found = await this.clientRepository.findClient(id);
+    const found = await this.clientsRepository.findClient(id);
     if (!found) {
       throw new NotFoundException(`Client with id ${id} not found.`);
     }
@@ -52,7 +52,7 @@ export class ClientsService {
   }
 
   async deleteClientById(id: number): Promise<string> {
-    const result = await this.clientRepository.deleteClient(id);
+    const result = await this.clientsRepository.deleteClient(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Client with id ${id} not found.`);
     }

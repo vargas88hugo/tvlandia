@@ -7,11 +7,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { TvServiceType } from './helpers/tv-service-type.enum';
-import { TvServiceStatus } from './helpers/tv-service-status.enum';
+import { TicketType } from './helpers/ticket-type.enum';
+import { TicketStatus } from './helpers/ticket-status.enum';
 
 @Entity()
-export class TvService extends BaseEntity {
+export class Ticket extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,10 +22,10 @@ export class TvService extends BaseEntity {
   observations: string;
 
   @Column()
-  serviceType: TvServiceType;
+  serviceType: TicketType;
 
   @Column()
-  status: TvServiceStatus;
+  status: TicketStatus;
 
   @Column({ nullable: true })
   clientId: number;

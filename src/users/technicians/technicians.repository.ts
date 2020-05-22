@@ -3,7 +3,7 @@ import { Repository, EntityRepository, DeleteResult } from 'typeorm';
 import { Technician } from './technician.entity';
 
 @EntityRepository(Technician)
-export class TechnicianRepository extends Repository<Technician> {
+export class TechniciansRepository extends Repository<Technician> {
   async getAllTechnicians(): Promise<Technician[]> {
     return await this.find({});
   }

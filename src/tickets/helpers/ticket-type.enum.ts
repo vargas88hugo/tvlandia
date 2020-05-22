@@ -1,4 +1,4 @@
-export enum TvServiceType {
+export enum TicketType {
   MAINTENANCE = 'MAINTENANCE',
   INSTALATION = 'INSTALATION',
 }

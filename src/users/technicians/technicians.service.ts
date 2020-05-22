@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { TechnicianRepository } from './technician.repository';
+import { TechniciansRepository } from './technicians.repository';
 import { Technician } from './technician.entity';
 import { TechnicianStatus } from './helpers/technician-status.enum';
 import { AuthCredentialsDto } from '../clients/dto/auth-client-credentials.dto';
@@ -15,8 +15,8 @@ import { hashPassword } from 'src/common/hash-password';
 @Injectable()
 export class TechniciansService {
   constructor(
-    @InjectRepository(TechnicianRepository)
-    private technicianRepository: TechnicianRepository,
+    @InjectRepository(TechniciansRepository)
+    private techniciansRepository: TechniciansRepository,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
@@ -31,22 +31,22 @@ export class TechniciansService {
     technician.password = await hashPassword(password, salt);
     technician.salt = salt;
 
-    if (await this.technicianRepository.findOne({ email })) {
+    if (await this.techniciansRepository.findOne({ email })) {
       throw new ConflictException(
         `Technician with email ${email} already exists.`,
       );
     }
-    await this.technicianRepository.saveTechnician(technician);
+    await this.techniciansRepository.saveTechnician(technician);
 
     return `New technician with email ${email} has been created.`;
   }
 
   async getAllTechnicians(): Promise<Technician[]> {
-    return await this.technicianRepository.getAllTechnicians();
+    return await this.techniciansRepository.getAllTechnicians();
   }
 
   async getTechnicianById(id: number) {
-    const found = await this.technicianRepository.findTechnician(id);
+    const found = await this.techniciansRepository.findTechnician(id);
 
     if (!found) {
       throw new NotFoundException(`User with id ${id} not found.`);
@@ -56,7 +56,7 @@ export class TechniciansService {
   }
 
   async deleteTechnicianById(id: number): Promise<string> {
-    const result = await this.technicianRepository.deleteTechnician(id);
+    const result = await this.techniciansRepository.deleteTechnician(id);
 
     if (result.affected === 0) {
       throw new NotFoundException(`Technician with id ${id} not found.`);
