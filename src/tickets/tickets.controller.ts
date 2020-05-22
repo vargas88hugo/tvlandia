@@ -17,7 +17,7 @@ import { Client } from 'src/users/clients/client.entity';
 import { GetClient } from 'src/users/clients/helpers/get-client.decorator';
 import { ClientAuthGuard } from 'src/users/clients/helpers/client-auth.guard';
 
-@Controller('ticket')
+@Controller('tickets')
 @UseGuards(ClientAuthGuard)
 export class TicketsController {
   constructor(private ticketService: TicketsService) {}
