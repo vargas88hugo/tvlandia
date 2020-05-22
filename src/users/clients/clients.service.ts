@@ -12,7 +12,7 @@ export class ClientsService {
   }
 
   createClient(body: CreateUserDto): ClientInterface {
-    let { name, phone, email } = body;
+    const { name, phone, email } = body;
 
     const client: ClientInterface = {
       id: uuidv4(),
