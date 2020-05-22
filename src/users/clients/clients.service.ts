@@ -83,10 +83,10 @@ export class ClientsService {
     signInClientDto: SignInClientDto,
   ): Promise<string> {
     const { email, password } = signInClientDto;
-    const user = await this.clientsRepository.findOne({ email });
+    const client = await this.clientsRepository.findOne({ email });
 
-    if (user && (await user.validatePassword(password))) {
-      return user.email;
+    if (client && (await client.validatePassword(password))) {
+      return client.email;
     }
 
     return null;

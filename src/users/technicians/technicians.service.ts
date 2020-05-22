@@ -2,21 +2,26 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 import { TechniciansRepository } from './technicians.repository';
 import { Technician } from './technician.entity';
 import { TechnicianStatus } from './helpers/technician-status.enum';
 import { AuthCredentialsDto } from '../clients/dto/auth-client-credentials.dto';
 import { hashPassword } from 'src/common/hash-password';
+import { SignInTechnicianDto } from './dto/signin-technician.dto';
+import { JwtPayload } from '../jwt-payload.interface';
 
 @Injectable()
 export class TechniciansService {
   constructor(
     @InjectRepository(TechniciansRepository)
     private techniciansRepository: TechniciansRepository,
+    private jwtService: JwtService,
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
@@ -41,6 +46,21 @@ export class TechniciansService {
     return `New technician with email ${email} has been created.`;
   }
 
+  async signIn(
+    signInTechnicianDto: SignInTechnicianDto,
+  ): Promise<{ accessToken: string }> {
+    const email = await this.validateUserPassword(signInTechnicianDto);
+
+    if (!email) {
+      throw new UnauthorizedException('Invalid Credentials');
+    }
+
+    const payload: JwtPayload = { email };
+    const accessToken = this.jwtService.sign(payload);
+
+    return { accessToken };
+  }
+
   async getAllTechnicians(): Promise<Technician[]> {
     return await this.techniciansRepository.getAllTechnicians();
   }
@@ -63,5 +83,18 @@ export class TechniciansService {
     }
 
     return `Technician with id ${id} has been deleted.`;
+  }
+
+  async validateUserPassword(
+    signInTechnicianDto: SignInTechnicianDto,
+  ): Promise<string> {
+    const { email, password } = signInTechnicianDto;
+    const technician = await this.techniciansRepository.findOne({ email });
+
+    if (technician && (await technician.validatePassword(password))) {
+      return technician.email;
+    }
+
+    return null;
   }
 }

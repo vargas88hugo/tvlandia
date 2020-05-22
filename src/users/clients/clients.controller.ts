@@ -9,7 +9,6 @@ import {
   ValidationPipe,
   ParseIntPipe,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 
 import { ClientsService } from './clients.service';

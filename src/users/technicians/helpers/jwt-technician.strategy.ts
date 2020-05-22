@@ -3,11 +3,14 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UnauthorizedException } from '@nestjs/common';
 
-import { TechniciansRepository } from './technicians.repository';
-import { JwtPayload } from '../jwt-payload.interface';
-import { Technician } from './technician.entity';
+import { TechniciansRepository } from '../technicians.repository';
+import { JwtPayload } from '../../jwt-payload.interface';
+import { Technician } from '../technician.entity';
 
-export class JwtTechnicianStrategy extends PassportStrategy(Strategy) {
+export class JwtTechnicianStrategy extends PassportStrategy(
+  Strategy,
+  'technician',
+) {
   constructor(
     @InjectRepository(TechniciansRepository)
     private techniciansRepository: TechniciansRepository,
