@@ -19,7 +19,7 @@ import { CreateTicketDto } from '../dto/create-ticket.dto';
 import { Ticket } from '../ticket.entity';
 import { ReviewClientDto } from '../dto/review-client.dto';
 
-@ApiBearerAuth()
+@ApiBearerAuth('Authorization')
 @Controller('ticket-client')
 @UseGuards(ClientAuthGuard)
 export class TicketClientController {
