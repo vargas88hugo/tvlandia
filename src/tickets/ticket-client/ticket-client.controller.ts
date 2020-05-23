@@ -7,6 +7,7 @@ import {
   ValidationPipe,
   Body,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { ClientAuthGuard } from 'src/users/clients/helpers/client-auth.guard';
 import { TicketClientService } from './ticket-client.service';
@@ -15,6 +16,7 @@ import { Client } from 'src/users/clients/client.entity';
 import { CreateTicketDto } from '../dto/create-ticket.dto';
 import { Ticket } from '../ticket.entity';
 
+@ApiBearerAuth()
 @Controller('ticket-client')
 @UseGuards(ClientAuthGuard)
 export class TicketClientController {

@@ -9,6 +9,12 @@ import {
   ValidationPipe,
   ParseIntPipe,
 } from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiResponse,
+  ApiUnauthorizedResponse,
+  ApiBody,
+} from '@nestjs/swagger';
 
 import { ClientsService } from './clients.service';
 import { Client } from './client.entity';
@@ -20,12 +26,17 @@ export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
   @Post('/signup')
+  @ApiCreatedResponse({ description: 'Registro de Usario' })
+  @ApiBody({ type: AuthCredentialsDto })
   @UsePipes(ValidationPipe)
   signUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<string> {
     return this.clientsService.signUp(authCredentialsDto);
   }
 
   @Post('signin')
+  @ApiCreatedResponse({ description: 'Inicio de sesión de Usuario' })
+  @ApiUnauthorizedResponse({ description: 'Credenciales inválidas' })
+  @ApiBody({ type: SignInClientDto })
   signIn(
     @Body(ValidationPipe) signInClientDto: SignInClientDto,
   ): Promise<{ accessToken: string }> {

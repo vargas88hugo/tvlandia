@@ -11,6 +11,8 @@ import * as bcrypt from 'bcrypt';
 import { ClientStatus } from './helpers/client-status.enum';
 import { UserInterface } from '../user.interface';
 import { Ticket } from 'src/tickets/ticket.entity';
+import { IsEmail } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 @Unique(['email'])
@@ -24,6 +26,7 @@ export class Client extends BaseEntity implements UserInterface {
   @Column()
   phone: string;
 
+  @IsEmail()
   @Column()
   email: string;
 

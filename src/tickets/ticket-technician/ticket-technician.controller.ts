@@ -6,6 +6,7 @@ import {
   Body,
   Get,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { TechnicianAuthGuard } from 'src/users/technicians/helpers/technician-auth.guard';
 import { TicketTechnicianService } from './ticket-technician.service';
@@ -15,6 +16,7 @@ import { Technician } from 'src/users/technicians/technician.entity';
 
 @Controller('ticket-technician')
 @UseGuards(TechnicianAuthGuard)
+@ApiBearerAuth('Authorization')
 export class TicketTechnicianController {
   constructor(private ticketTechnicianService: TicketTechnicianService) {}
 
