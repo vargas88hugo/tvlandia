@@ -109,6 +109,10 @@ Se ha creado un branch local donde la aplicación funciona localmente por si hay
 └── tsconfig.json
 ```
 
+## Modelo de datos inicial
+Diseño de modelación de datos inicial. Cambió un poco en el transcurso del proyecto.
+<img src="http://i.imgur.com/GOu5Q2a.png" />
+
 ## Running the app
 
 ```bash
