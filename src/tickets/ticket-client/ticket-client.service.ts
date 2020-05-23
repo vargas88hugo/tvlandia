@@ -9,6 +9,7 @@ import { TicketsRepository } from '../tickets.repository';
 import { TechniciansRepository } from 'src/users/technicians/technicians.repository';
 import { TechnicianStatus } from 'src/users/technicians/helpers/technician-status.enum';
 import { Technician } from 'src/users/technicians/technician.entity';
+import { ClientsRepository } from 'src/users/clients/clients.repository';
 
 @Injectable()
 export class TicketClientService {
@@ -16,7 +17,9 @@ export class TicketClientService {
     @InjectRepository(TicketsRepository)
     private ticketRepository,
     @InjectRepository(TechniciansRepository)
-    private technicianRepository,
+    private techniciansRepository,
+    @InjectRepository(ClientsRepository)
+    private clientsRepository,
   ) {}
 
   async createTicket(
@@ -55,7 +58,7 @@ export class TicketClientService {
   }
 
   async chooseTechnician(): Promise<Technician> {
-    const technicians = await this.technicianRepository.find({});
+    const technicians = await this.techniciansRepository.find({});
     if (technicians.length === 0) {
       throw new NotFoundException(
         `There is not technicians. Please try later.`,
@@ -65,7 +68,7 @@ export class TicketClientService {
     let technician: Technician;
     let i: number = 1;
     while (true) {
-      technician = await this.technicianRepository.findOne({
+      technician = await this.techniciansRepository.findOne({
         status: TechnicianStatus.IDLE,
       });
       if (technician !== undefined) {
@@ -81,5 +84,22 @@ export class TicketClientService {
     }
 
     return technician;
+  }
+
+  async getTicketById(id: number, client: Client): Promise<Ticket> {
+    const query = this.ticketRepository.createQueryBuilder('ticket');
+
+    query.where('ticket.clientId = :clientId', { clientId: client.id });
+
+    query.andWhere('ticket.id = :id', {
+      id,
+    });
+
+    const ticket = await query.getOne();
+    if (!ticket) {
+      throw new NotFoundException(`Ticket with id ${id} not found.`);
+    }
+
+    return ticket;
   }
 }

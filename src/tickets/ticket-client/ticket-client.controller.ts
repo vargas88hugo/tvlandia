@@ -6,6 +6,8 @@ import {
   UsePipes,
   ValidationPipe,
   Body,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiBody } from '@nestjs/swagger';
 
@@ -44,5 +46,17 @@ export class TicketClientController {
   })
   getAllTicketsClient(@GetClient() client: Client) {
     return this.ticketClientService.getAllTicketsClient(client);
+  }
+
+  @Get('/:id')
+  @ApiCreatedResponse({
+    description:
+      'Link para que el cliente autenticado pueda seguir el estado de su ticket',
+  })
+  getTicketById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetClient() client: Client,
+  ): Promise<Ticket> {
+    return this.ticketClientService.getTicketById(id, client);
   }
 }

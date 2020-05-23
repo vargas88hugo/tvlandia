@@ -9,10 +9,15 @@ import { TicketClientService } from './ticket-client/ticket-client.service';
 import { TicketTechnicianController } from './ticket-technician/ticket-technician.controller';
 import { TicketTechnicianService } from './ticket-technician/ticket-technician.service';
 import { TechniciansRepository } from 'src/users/technicians/technicians.repository';
+import { ClientsRepository } from 'src/users/clients/clients.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TicketsRepository, TechniciansRepository]),
+    TypeOrmModule.forFeature([
+      TicketsRepository,
+      TechniciansRepository,
+      ClientsRepository,
+    ]),
     ClientsModule,
   ],
   controllers: [
