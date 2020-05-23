@@ -26,7 +26,7 @@ export class ClientsController {
   constructor(private clientsService: ClientsService) {}
 
   @Post('/signup')
-  @ApiCreatedResponse({ description: 'Registro de Usario' })
+  @ApiCreatedResponse({ description: 'Registro de Cliente' })
   @ApiBody({ type: AuthCredentialsDto })
   @UsePipes(ValidationPipe)
   signUp(@Body() authCredentialsDto: AuthCredentialsDto): Promise<string> {
@@ -34,7 +34,9 @@ export class ClientsController {
   }
 
   @Post('signin')
-  @ApiCreatedResponse({ description: 'Inicio de sesión de Usuario' })
+  @ApiCreatedResponse({
+    description: 'Autenticación del Cliente. Devuelve el JWT.',
+  })
   @ApiUnauthorizedResponse({ description: 'Credenciales inválidas' })
   @ApiBody({ type: SignInClientDto })
   signIn(
@@ -44,16 +46,25 @@ export class ClientsController {
   }
 
   @Get()
+  @ApiCreatedResponse({
+    description: 'Endpoint para testear. Devuelve todos los cientes',
+  })
   getAllClients(): Promise<Client[]> {
     return this.clientsService.getAllClients();
   }
 
   @Get('/:id')
+  @ApiCreatedResponse({
+    description: 'Endpoint para testear. Devuelve cliente por id',
+  })
   getClientById(@Param('id', ParseIntPipe) id: number): Promise<Client> {
     return this.clientsService.getClientById(id);
   }
 
   @Delete('/:id')
+  @ApiCreatedResponse({
+    description: 'Endpoint para testear. Elimina cliente por id',
+  })
   deleteClientById(@Param('id') id: number): Promise<string> {
     return this.clientsService.deleteClientById(id);
   }

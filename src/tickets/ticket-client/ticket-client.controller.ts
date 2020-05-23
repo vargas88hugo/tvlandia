@@ -7,7 +7,7 @@ import {
   ValidationPipe,
   Body,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiBody } from '@nestjs/swagger';
 
 import { ClientAuthGuard } from 'src/users/clients/helpers/client-auth.guard';
 import { TicketClientService } from './ticket-client.service';
@@ -24,6 +24,13 @@ export class TicketClientController {
 
   @Post()
   @UsePipes(ValidationPipe)
+  @ApiCreatedResponse({
+    description:
+      'Crea un Ticket al usuario autenticado y lo asigna automáticamente a \
+      un técnico. Si todos los técnicos están ocupados la API esperará hasta que \
+      se desocupe alguno.',
+  })
+  @ApiBody({ type: CreateTicketDto })
   createTicket(
     @Body() createTicketDto: CreateTicketDto,
     @GetClient() client: Client,
@@ -32,6 +39,9 @@ export class TicketClientController {
   }
 
   @Get()
+  @ApiCreatedResponse({
+    description: 'Obtiene todos lo tickets del cliente autenticado.',
+  })
   getAllTicketsClient(@GetClient() client: Client) {
     return this.ticketClientService.getAllTicketsClient(client);
   }
