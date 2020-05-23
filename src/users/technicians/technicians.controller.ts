@@ -30,6 +30,7 @@ export class TechniciansController {
   }
 
   @Post('signin')
+  @UsePipes(ValidationPipe)
   @ApiCreatedResponse({ description: 'Autenticación de Técnico' })
   @ApiBody({ type: SignInTechnicianDto })
   signIn(

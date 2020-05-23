@@ -30,6 +30,12 @@ export class Ticket extends BaseEntity {
   @Column()
   status: TicketStatus;
 
+  @Column({ nullable: true })
+  review: string;
+
+  @Column({ nullable: true })
+  calification: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

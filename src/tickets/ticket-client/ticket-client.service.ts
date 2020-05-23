@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from 'src/tickets/ticket.entity';
@@ -10,6 +14,7 @@ import { TechniciansRepository } from 'src/users/technicians/technicians.reposit
 import { TechnicianStatus } from 'src/users/technicians/helpers/technician-status.enum';
 import { Technician } from 'src/users/technicians/technician.entity';
 import { ClientsRepository } from 'src/users/clients/clients.repository';
+import { ReviewClientDto } from '../dto/review-client.dto';
 
 @Injectable()
 export class TicketClientService {
@@ -99,6 +104,34 @@ export class TicketClientService {
     if (!ticket) {
       throw new NotFoundException(`Ticket with id ${id} not found.`);
     }
+
+    return ticket;
+  }
+
+  async reviewTicket(reviewClientDto: ReviewClientDto, client: Client) {
+    const query = this.ticketRepository.createQueryBuilder('ticket');
+
+    query.where('ticket.clientId = :clientId', { clientId: client.id });
+
+    query.andWhere('ticket.id = :id', {
+      id: reviewClientDto.ticketId,
+    });
+
+    const ticket: Ticket = await query.getOne();
+    if (!ticket) {
+      throw new NotFoundException(
+        `Ticket with id ${reviewClientDto.ticketId} not found.`,
+      );
+    }
+    if (ticket.status !== TicketStatus.COMPLETED) {
+      throw new ConflictException(
+        `Ticket with id ${reviewClientDto.ticketId} has not been finalized.`,
+      );
+    }
+
+    ticket.review = reviewClientDto.review;
+    ticket.calification = reviewClientDto.calification;
+    await this.ticketRepository.saveTicket(ticket);
 
     return ticket;
   }

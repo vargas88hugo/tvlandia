@@ -5,6 +5,7 @@ import {
   Post,
   Body,
   Get,
+  UsePipes,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiBody } from '@nestjs/swagger';
 
@@ -21,6 +22,7 @@ export class TicketTechnicianController {
   constructor(private ticketTechnicianService: TicketTechnicianService) {}
 
   @Post('/finish')
+  @UsePipes(ValidationPipe)
   @ApiCreatedResponse({
     description:
       'Finaliza un ticket pendiente por medio de un id del técnico auténticado.\

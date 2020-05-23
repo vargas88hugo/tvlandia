@@ -34,6 +34,7 @@ export class ClientsController {
   }
 
   @Post('signin')
+  @UsePipes(ValidationPipe)
   @ApiCreatedResponse({
     description: 'Autenticación del Cliente. Devuelve el JWT.',
   })

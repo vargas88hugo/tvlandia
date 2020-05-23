@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsIn, IsOptional } from 'class-validator';
-import { TicketType } from '../helpers/ticket-type.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class FinishTicketDto {
