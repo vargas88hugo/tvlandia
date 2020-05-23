@@ -60,7 +60,14 @@ export class ClientsService {
   }
 
   async getAllClients(): Promise<Client[]> {
-    return await this.clientsRepository.getAllClients();
+    let clients = await this.clientsRepository.getAllClients();
+    clients = clients.map(client => {
+      delete client.tickets;
+      delete client.password;
+      delete client.salt;
+      return client;
+    });
+    return clients;
   }
 
   async getClientById(id: number) {

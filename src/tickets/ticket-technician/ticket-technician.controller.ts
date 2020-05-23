@@ -1,23 +1,36 @@
 import {
   Controller,
   UseGuards,
-  Get,
-  UsePipes,
   ValidationPipe,
+  Post,
+  Body,
+  Get,
 } from '@nestjs/common';
 
 import { TechnicianAuthGuard } from 'src/users/technicians/helpers/technician-auth.guard';
-import { TechniciansRepository } from 'src/users/technicians/technicians.repository';
+import { TicketTechnicianService } from './ticket-technician.service';
+import { FinishTicketDto } from '../dto/finish-ticket.dto';
+import { GetTechnician } from 'src/users/technicians/helpers/get-technician.decorator';
 import { Technician } from 'src/users/technicians/technician.entity';
 
 @Controller('ticket-technician')
 @UseGuards(TechnicianAuthGuard)
 export class TicketTechnicianController {
-  constructor(private technicianRepository: TechniciansRepository) {}
+  constructor(private ticketTechnicianService: TicketTechnicianService) {}
+
+  @Post('/finish')
+  async finishTicket(
+    @Body(ValidationPipe) finishTicketDto: FinishTicketDto,
+    @GetTechnician() technician: Technician,
+  ): Promise<string> {
+    return await this.ticketTechnicianService.finishTicket(
+      finishTicketDto,
+      technician,
+    );
+  }
 
   @Get()
-  @UsePipes(ValidationPipe)
-  async getAllTechnicians(): Promise<Technician[]> {
-    return await this.technicianRepository.find({});
+  async getPendingTickets(@GetTechnician() technician: Technician) {
+    return this.ticketTechnicianService.getPendingTickets(technician);
   }
 }

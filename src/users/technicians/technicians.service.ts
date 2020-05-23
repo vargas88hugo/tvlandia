@@ -62,7 +62,14 @@ export class TechniciansService {
   }
 
   async getAllTechnicians(): Promise<Technician[]> {
-    return await this.techniciansRepository.getAllTechnicians();
+    let technicians = await this.techniciansRepository.getAllTechnicians();
+    technicians = technicians.map(technician => {
+      delete technician.tickets;
+      delete technician.password;
+      delete technician.salt;
+      return technician;
+    });
+    return technicians;
   }
 
   async getTechnicianById(id: number) {

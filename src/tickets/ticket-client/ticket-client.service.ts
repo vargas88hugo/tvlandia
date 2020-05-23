@@ -39,6 +39,7 @@ export class TicketClientService {
     await this.ticketRepository.saveTicket(ticket);
 
     delete ticket.client;
+    delete ticket.technician;
 
     return ticket;
   }
