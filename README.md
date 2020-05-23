@@ -2,36 +2,111 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
-  
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository. Api creada con NestJs, TypeORM, PostgreSQL, Swagger y Docker. Se trata de una aplicación para una empresa que ofrece servicios de mantenimiento e instalación de soportes para televisores. Los clientes pueden hacer una solicitud de servicio generando un ticket a través del sistema, el cual una vez valide la identificación del cliente debe generar un estado inicial de la solicitud, generar un token y asignar a un técnico de forma aleatoria para que atienda la solicitud, se crea un link para seguimiento del servicio y un link para calificar el servicio. Por último, los técnicos pueden ver las órdenes asignadas que debe atender en transcurso del día y es necesario contar con un endpoint que retorne los servicios del técnico en formato JSON con el listado.
 
 ## Installation
-
+Dentro del root del repositorio ejecutar el bash script para configurar la autentificación de la base de datos y construir los containers. El docker-compose se ejecutará en mode detach.
 ```bash
-$ npm install
+$ ./start.sh
+```
+
+## Observations
+Se ha creado un branch local donde la aplicación funciona localmente por si hay problemas con el docker. La generación de la imagen puede tardar unos minutos ya que está poco optimizada y pesa alrededor de 400mb. El multicontainer está compuesto con una imagen de posgresql, un adminer para consultar la base de datos, y el backend con nestjs.
+
+| Nombre | URL |
+|--------|-----|
+| NestJS/Swagger | http://localhost:3000/api | 
+| Adminer | http://localhost:8080/ |
+
+## File Directory
+```
+├── docker-compose.yml
+├── Dockerfile
+├── nest-cli.json
+├── node_modules
+├── package.json
+├── package-lock.json
+├── README.md
+├── src
+│   ├── app.module.ts
+│   ├── common
+│   │   └── hash-password.ts
+│   ├── config
+│   │   └── typeorm.config.ts
+│   ├── main.ts
+│   ├── tickets
+│   │   ├── dto
+│   │   │   ├── create-ticket.dto.ts
+│   │   │   ├── finish-ticket.dto.ts
+│   │   │   └── review-client.dto.ts
+│   │   ├── helpers
+│   │   │   ├── ticket-status.enum.ts
+│   │   │   └── ticket-type.enum.ts
+│   │   ├── tests
+│   │   │   ├── ticket-client.controller.spec.ts
+│   │   │   ├── ticket-client.service.spec.ts
+│   │   │   ├── ticket.controller.spec.ts
+│   │   │   ├── ticket.service.spec.ts
+│   │   │   ├── ticket-technician.controller.spec.ts
+│   │   │   └── ticket-technician.service.spec.ts
+│   │   ├── ticket-client
+│   │   │   ├── ticket-client.controller.ts
+│   │   │   └── ticket-client.service.ts
+│   │   ├── ticket.entity.ts
+│   │   ├── tickets.controller.ts
+│   │   ├── tickets.module.ts
+│   │   ├── tickets.repository.ts
+│   │   ├── tickets.service.ts
+│   │   └── ticket-technician
+│   │       ├── ticket-technician.controller.ts
+│   │       └── ticket-technician.service.ts
+│   └── users
+│       ├── clients
+│       │   ├── client.entity.ts
+│       │   ├── clients.controller.ts
+│       │   ├── clients.module.ts
+│       │   ├── clients.repository.ts
+│       │   ├── clients.service.ts
+│       │   ├── dto
+│       │   │   ├── auth-client-credentials.dto.ts
+│       │   │   └── signin-client.dto.ts
+│       │   ├── helpers
+│       │   │   ├── client-auth.guard.ts
+│       │   │   ├── client-status.enum.ts
+│       │   │   ├── get-client.decorator.ts
+│       │   │   └── jwt-client.strategy.ts
+│       │   └── tests
+│       │       ├── clients.controller.spec.ts
+│       │       ├── clients.service.spec.ts
+│       │       ├── tickets.controller.spec.ts
+│       │       └── tickets.service.spec.ts
+│       ├── jwt-payload.interface.ts
+│       ├── technicians
+│       │   ├── dto
+│       │   │   ├── auth-tech-credentials.dto.ts
+│       │   │   └── signin-technician.dto.ts
+│       │   ├── helpers
+│       │   │   ├── get-technician.decorator.ts
+│       │   │   ├── jwt-technician.strategy.ts
+│       │   │   ├── technician-auth.guard.ts
+│       │   │   └── technician-status.enum.ts
+│       │   ├── technician.entity.ts
+│       │   ├── technicians.controller.ts
+│       │   ├── technicians.module.ts
+│       │   ├── technicians.repository.ts
+│       │   ├── technicians.service.ts
+│       │   └── tests
+│       │       ├── technicians.controller.spec.ts
+│       │       └── technicians.service.spec.ts
+│       └── user.interface.ts
+├── start.sh
+├── test
+│   ├── app.e2e-spec.ts
+│   └── jest-e2e.json
+├── tsconfig.build.json
+└── tsconfig.json
 ```
 
 ## Running the app
@@ -58,18 +133,4 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-  Nest is [MIT licensed](LICENSE).
+```.
