@@ -15,6 +15,8 @@ $ ./start.sh
 ## Observations
 Se ha creado un branch local donde la aplicación funciona localmente por si hay problemas con el docker. La generación de la imagen puede tardar unos minutos ya que está poco optimizada y pesa alrededor de 400mb. El multicontainer está compuesto con una imagen de posgresql, un adminer para consultar la base de datos, y el backend con nestjs.
 
+Swagger esta integrado con el JWT Bearer Authorizaton para que se pueda testear fácilmente. 
+
 | Nombre | URL |
 |--------|-----|
 | NestJS/Swagger | http://localhost:3000/api | 
